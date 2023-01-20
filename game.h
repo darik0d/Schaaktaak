@@ -6,9 +6,10 @@
 #ifndef SCHAKEN_GAME_H
 #define SCHAKEN_GAME_H
 #include <iostream>
+
 using namespace std;
 #include "SchaakStuk.h"
-
+class SchaakStuk;
 class Game {
 // variabelen om de status van het spel/bord te bewaren
 
@@ -22,9 +23,9 @@ public:
     bool schaakmat(zw kleur);
     bool pat(zw kleur);
     void setStartBord();
-    SchaakStuk* getPiece(int r, int k);
+    SchaakStuk* getPiece(int r, int k) const;
     const vector<SchaakStuk *> &getSpeelbord() const;
-
+    void deletePiece(int r, int k);
     void setPiece(int r, int k, SchaakStuk* s);
     bool bezet(int row, int col) const;
     bool bezet(int index) const;

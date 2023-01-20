@@ -41,10 +41,10 @@ void Game::setStartBord() {
     setPiece(7, 3, new Koningin(wit));
     setPiece(7, 4, new Koning(wit));
 
-//    SchaakStuk* s= getPiece(1,0); // Zwarte pion
-//    vector<pair<int,int>> v=s->geldige_zetten(*this);
-//    move(s,2,0); // Geeft true; het stuk wordt verplaatst
-//    move(s,5,1);
+    SchaakStuk* s= getPiece(1,0); // Zwarte pion
+    vector<pair<int,int>> v=s->geldige_zetten(*this);
+    move(s,2,0); // Geeft true; het stuk wordt verplaatst
+    move(s,5,1);
 }
 // Verplaats stuk s naar positie (r,k)
 // Als deze move niet mogelijk is, wordt false teruggegeven
@@ -52,8 +52,13 @@ void Game::setStartBord() {
 // Anders wordt de move uitgevoerd en wordt true teruggegeven
 bool Game::move(SchaakStuk* s, int r, int k) {
     pair<int,int> pos = make_pair(r,k);
-    if(find(s->geldige_zetten(*this).begin(), s->geldige_zetten(*this).end(), pos) != s->geldige_zetten(*this).end()){
+    vector<pair<int,int>> mog = s->geldige_zetten(*this);
+    if(find(mog.begin(), mog.end(), pos) != mog.end()){
+        pair <int,int> old_pos = s->getPosition(*this);
+        int old_r = old_pos.first;
+        int old_k = old_pos.second;
         setPiece(r,k,s);
+        deletePiece(old_r, old_k);
         return true;
     }
     else return false;
@@ -76,10 +81,15 @@ bool Game::schaakmat(zw kleur) {
 bool Game::pat(zw kleur) {
     return false;
 }
-
+void Game::deletePiece(int r, int k){
+    if(0 < r < 8 && 0 < k < 8){
+        int index = r*8 + k;
+        speelbord[index] = nullptr;
+    }
+}
 // Geeft een pointer naar het schaakstuk dat op rij r, kolom k staat
 // Als er geen schaakstuk staat op deze positie, geef nullptr terug
-SchaakStuk* Game::getPiece(int r, int k) {
+SchaakStuk* Game::getPiece(int r, int k) const{
     // Hier komt jouw code om op te halen welk stuk op rij r, kolom k staat
     if(r > 7 || k > 7) return nullptr;
     if(speelbord.empty()) return nullptr;

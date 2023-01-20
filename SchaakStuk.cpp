@@ -10,7 +10,7 @@ pair <int,int> SchaakStuk::getPosition(Game& game)const{
     int index = 0;
     vector<SchaakStuk*> spb = game.getSpeelbord();
     for(int i = 0; i < 64; i++){
-        if(spb[index] == this){
+        if(spb[i] == this){
             index = i;
         }
     }
@@ -55,6 +55,7 @@ vector<pair<int,int>> Pion::geldige_zetten(Game& game)const{
             wow.push_back(make_pair(pos.first+1,pos.second+1));
         }
     }
+    return wow;
 }
 
 vector<pair<int,int>> Toren::geldige_zetten(Game& game)const{
