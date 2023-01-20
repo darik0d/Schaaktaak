@@ -23,11 +23,11 @@ public:
     bool pat(zw kleur);
     void setStartBord();
     SchaakStuk* getPiece(int r, int k);
-
     const vector<SchaakStuk *> &getSpeelbord() const;
 
     void setPiece(int r, int k, SchaakStuk* s);
-
+    bool bezet(int row, int col) const;
+    bool bezet(int index) const;
 private:
     vector<SchaakStuk*> speelbord;
     // Hier zet jij jouw datastructuur neer om het bord te bewaren ...

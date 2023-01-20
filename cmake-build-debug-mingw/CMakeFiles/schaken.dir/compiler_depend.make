@@ -574,7 +574,9 @@ CMakeFiles/schaken.dir/SchaakStuk.cpp.obj: ../SchaakStuk.cpp \
   C:/Qt/Tools/mingw810_64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/bits/shared_ptr_atomic.h \
   C:/Qt/Tools/mingw810_64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/backward/auto_ptr.h \
   C:/Qt/5.15.2/mingw81_64/include/QtGui/qfont.h \
-  C:/Qt/5.15.2/mingw81_64/include/QtGui/qpen.h
+  C:/Qt/5.15.2/mingw81_64/include/QtGui/qpen.h \
+  ../game.h \
+  C:/Qt/Tools/mingw810_64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/iostream
 
 CMakeFiles/schaken.dir/game.cpp.obj: ../game.cpp \
   ../game.h \

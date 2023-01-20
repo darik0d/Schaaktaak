@@ -4,7 +4,6 @@
 //
 
 #include "game.h"
-
 Game::Game() {
     speelbord.clear();
     for(int i = 0; i < 64; i++){
@@ -17,37 +16,47 @@ Game::~Game() {}
 // Zet het bord klaar; voeg de stukken op de jusite plaats toe
 void Game::setStartBord() {
     //maak een leeg bord aan
-    //set witte schaakstukken
-    for(int i = 0; i < 8; i++){
-        setPiece(1, i, new Pion(wit));
-    }
-    setPiece(0, 0, new Toren(wit));
-    setPiece(0, 7, new Toren(wit));
-    setPiece(0, 1, new Paard(wit));
-    setPiece(0, 6, new Paard(wit));
-    setPiece(0, 2, new Loper(wit));
-    setPiece(0, 5, new Loper(wit));
-    setPiece(0, 3, new Koningin(wit));
-    setPiece(0, 4, new Koning(wit));
     //set zwarte schaakstukken
     for(int i = 0; i < 8; i++){
-        setPiece(6, i, new Pion(zwart));
+        setPiece(1, i, new Pion(zwart));
     }
-    setPiece(7, 0, new Toren(zwart));
-    setPiece(7, 7, new Toren(zwart));
-    setPiece(7, 1, new Paard(zwart));
-    setPiece(7, 6, new Paard(zwart));
-    setPiece(7, 2, new Loper(zwart));
-    setPiece(7, 5, new Loper(zwart));
-    setPiece(7, 3, new Koningin(zwart));
-    setPiece(7, 4, new Koning(zwart));
+    setPiece(0, 0, new Toren(zwart));
+    setPiece(0, 7, new Toren(zwart));
+    setPiece(0, 1, new Paard(zwart));
+    setPiece(0, 6, new Paard(zwart));
+    setPiece(0, 2, new Loper(zwart));
+    setPiece(0, 5, new Loper(zwart));
+    setPiece(0, 3, new Koningin(zwart));
+    setPiece(0, 4, new Koning(zwart));
+    //set witte schaakstukken
+    for(int i = 0; i < 8; i++){
+        setPiece(6, i, new Pion(wit));
+    }
+    setPiece(7, 0, new Toren(wit));
+    setPiece(7, 7, new Toren(wit));
+    setPiece(7, 1, new Paard(wit));
+    setPiece(7, 6, new Paard(wit));
+    setPiece(7, 2, new Loper(wit));
+    setPiece(7, 5, new Loper(wit));
+    setPiece(7, 3, new Koningin(wit));
+    setPiece(7, 4, new Koning(wit));
+
+//    SchaakStuk* s= getPiece(1,0); // Zwarte pion
+//    vector<pair<int,int>> v=s->geldige_zetten(*this);
+//    move(s,2,0); // Geeft true; het stuk wordt verplaatst
+//    move(s,5,1);
 }
 // Verplaats stuk s naar positie (r,k)
 // Als deze move niet mogelijk is, wordt false teruggegeven
 // en verandert er niets aan het schaakbord.
 // Anders wordt de move uitgevoerd en wordt true teruggegeven
 bool Game::move(SchaakStuk* s, int r, int k) {
-    return true;
+    pair<int,int> pos = make_pair(r,k);
+    if(find(s->geldige_zetten(*this).begin(), s->geldige_zetten(*this).end(), pos) != s->geldige_zetten(*this).end()){
+        setPiece(r,k,s);
+        return true;
+    }
+    else return false;
 }
 
 
@@ -82,6 +91,15 @@ SchaakStuk* Game::getPiece(int r, int k) {
 // Als er al een schaakstuk staat, wordt het overschreven.
 // Bewaar in jouw datastructuur de *pointer* naar het schaakstuk,
 // niet het schaakstuk zelf.
+bool Game::bezet(int row, int col) const{
+    int index = row*8 + col;
+    if(speelbord[index] != nullptr) return true;
+    else return false;
+}
+bool Game::bezet(int index) const{
+    if(speelbord[index] != nullptr) return true;
+    else return false;
+}
 void Game::setPiece(int r, int k, SchaakStuk* s)
 {
     int index = r*8 + k;
@@ -92,3 +110,5 @@ void Game::setPiece(int r, int k, SchaakStuk* s)
 const vector<SchaakStuk *> &Game::getSpeelbord() const {
     return speelbord;
 }
+
+
