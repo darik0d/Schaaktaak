@@ -1,0 +1,4 @@
+C:/Users/dasha/CLionProjects/codeBase_2/cmake-build-debug-mingw/CMakeFiles/schaken.dir
+C:/Users/dasha/CLionProjects/codeBase_2/cmake-build-debug-mingw/CMakeFiles/edit_cache.dir
+C:/Users/dasha/CLionProjects/codeBase_2/cmake-build-debug-mingw/CMakeFiles/rebuild_cache.dir
+C:/Users/dasha/CLionProjects/codeBase_2/cmake-build-debug-mingw/CMakeFiles/schaken_autogen.dir
