@@ -5,7 +5,7 @@
 
 #include "game.h"
 Game::Game() {
-    speelbord.clear();
+
     for(int i = 0; i < 64; i++){
         speelbord.push_back(nullptr);
     }
@@ -16,6 +16,10 @@ Game::~Game() {}
 // Zet het bord klaar; voeg de stukken op de jusite plaats toe
 void Game::setStartBord() {
     //maak een leeg bord aan
+    speelbord.clear();
+    for(int i = 0; i < 64; i++){
+        speelbord.push_back(nullptr);
+    }
     //set zwarte schaakstukken
     for(int i = 0; i < 8; i++){
         setPiece(1, i, new Pion(zwart));
