@@ -47,8 +47,8 @@ void Game::setStartBord() {
 
     SchaakStuk* s= getPiece(1,0); // Zwarte pion
     vector<pair<int,int>> v=s->geldige_zetten(*this);
-    move(s,2,0); // Geeft true; het stuk wordt verplaatst
-    move(s,5,1);
+    //move(s,2,0); // Geeft true; het stuk wordt verplaatst
+    //move(s,5,1);
 }
 // Verplaats stuk s naar positie (r,k)
 // Als deze move niet mogelijk is, wordt false teruggegeven
@@ -59,10 +59,12 @@ bool Game::move(SchaakStuk* s, int r, int k) {
     vector<pair<int,int>> mog = s->geldige_zetten(*this);
     if(find(mog.begin(), mog.end(), pos) != mog.end()){
         pair <int,int> old_pos = s->getPosition(*this);
+        cout << "Oude positie " << old_pos.first << ", " << old_pos.second << endl;
         int old_r = old_pos.first;
         int old_k = old_pos.second;
         setPiece(r,k,s);
         deletePiece(old_r, old_k);
+
         return true;
     }
     else return false;

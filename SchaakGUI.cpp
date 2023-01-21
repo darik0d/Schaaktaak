@@ -21,6 +21,28 @@ void SchaakGUI::clicked(int r, int k) {
     // Jouw code zal er helemaal anders uitzien en zal enkel de aanpassing in de spelpositie maken en er voor
     // zorgen dat de visualisatie (al dan niet via update) aangepast wordt.
     removeAllMarking();
+    if(!second_click){
+        if(g.bezet(r,k) == nullptr) return;
+        if(g.bezet(r,k)->getKleur() == wit && wit_aan_de_beurt || g.bezet(r,k)->getKleur() == zwart && !wit_aan_de_beurt) {
+            selected_figure = g.bezet(r, k);
+            old_position = make_pair(r, k);
+            if (selected_figure != nullptr) second_click = true;
+        } else{
+            message("Nu is niet jouw beurt.");
+        }
+    }else{
+        second_click = false;
+        if(g.move(selected_figure, r, k)){
+            g.move(selected_figure, r, k);
+            clearBoard();
+            update();
+            cout << "wow, nice" << endl;
+            wit_aan_de_beurt = !wit_aan_de_beurt;
+        }else{
+            cout << "dat mag niet, bitch" << endl;
+            message("Deze zet is ongeldig.");
+        }
+    }
 //    // Volgende schaakstukken worden aangemaakt om het voorbeeld te illustreren.
 //    // In jouw geval zullen de stukken uit game g komen
 //    SchaakStuk* p1=new Pion(zwart);

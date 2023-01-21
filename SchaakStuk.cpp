@@ -273,7 +273,14 @@ vector<pair<int,int>> Koning::geldige_zetten(Game& game) const{
     pair<int,int> pos = getPosition(game);
     for(int i = -1; i < 2; i++){
         for(int k = -1; k < 2; k++){
-            if(-1 < pos.first + i < 8 && -1 < pos.second + k < 8 && (game.bezet(pos.first + i, pos.second + k) == nullptr || game.bezet(pos.first + i, pos.second + k)->getKleur() != getKleur())) wow.push_back(make_pair(pos.first+i, pos.second+k));
+            if(-1 < pos.first + i && pos.first + i < 8 && -1 < pos.second + k && pos.second + k < 8) {
+                if(game.bezet(pos.first + i, pos.second + k) == nullptr) {
+                    wow.push_back(make_pair(pos.first+i, pos.second+k));
+                }
+                else if(game.bezet(pos.first + i, pos.second + k)->getKleur() != getKleur()) {
+                    wow.push_back(make_pair(pos.first+i, pos.second+k));
+                }
+            }
         }
     }
     return wow;
