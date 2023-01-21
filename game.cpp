@@ -101,14 +101,14 @@ SchaakStuk* Game::getPiece(int r, int k) const{
 // Als er al een schaakstuk staat, wordt het overschreven.
 // Bewaar in jouw datastructuur de *pointer* naar het schaakstuk,
 // niet het schaakstuk zelf.
-bool Game::bezet(int row, int col) const{
+SchaakStuk* Game::bezet(int row, int col) const{
     int index = row*8 + col;
-    if(speelbord[index] != nullptr) return true;
-    else return false;
+    if(speelbord[index] != nullptr) return speelbord[index];
+    else return nullptr;
 }
-bool Game::bezet(int index) const{
-    if(speelbord[index] != nullptr) return true;
-    else return false;
+SchaakStuk* Game::bezet(int index) const{
+    if(speelbord[index] != nullptr) return speelbord[index];
+    else return nullptr;
 }
 void Game::setPiece(int r, int k, SchaakStuk* s)
 {

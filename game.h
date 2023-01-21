@@ -27,8 +27,8 @@ public:
     const vector<SchaakStuk *> &getSpeelbord() const;
     void deletePiece(int r, int k);
     void setPiece(int r, int k, SchaakStuk* s);
-    bool bezet(int row, int col) const;
-    bool bezet(int index) const;
+    SchaakStuk* bezet(int row, int col) const;
+    SchaakStuk* bezet(int index) const;
 private:
     vector<SchaakStuk*> speelbord;
     // Hier zet jij jouw datastructuur neer om het bord te bewaren ...
