@@ -20,7 +20,7 @@ public:
                                         // setItem(x,y,SchaakStuk*) van
                                         // SchaakGUI
     pair <int,int> getPosition(Game& game)const;
-    zw getKleur() const { return kleur; }
+    zw getKleur() const { if(this != nullptr) return kleur;}
 private:
     zw kleur;
 };

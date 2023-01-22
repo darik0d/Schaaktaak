@@ -21,7 +21,6 @@ private:
     bool second_click = false;
     bool wit_aan_de_beurt = true;
     SchaakStuk* selected_figure = nullptr;
-    pair<int,int> old_position;
     void clicked(int x, int y) override;
     void newGame() override;
     void open() override;

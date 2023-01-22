@@ -25,10 +25,15 @@ void SchaakGUI::clicked(int r, int k) {
         if(g.bezet(r,k) == nullptr) return;
         if(g.bezet(r,k)->getKleur() == wit && wit_aan_de_beurt || g.bezet(r,k)->getKleur() == zwart && !wit_aan_de_beurt) {
             selected_figure = g.bezet(r, k);
-            old_position = make_pair(r, k);
-            if (selected_figure != nullptr) second_click = true;
+            if (selected_figure != nullptr) {
+                setTileSelect(r, k, true);
+                for(auto x: selected_figure->geldige_zetten(g)){
+                    setTileFocus(x.first, x.second, true);
+                }
+                second_click = true;
+            }
         } else{
-            message("Nu is niet jouw beurt.");
+            message("Sorry, nu is niet uw beurt.");
         }
     }else{
         second_click = false;
@@ -144,8 +149,11 @@ void SchaakGUI::clicked(int r, int k) {
 }
 
 void SchaakGUI::newGame(){
-
+    clearBoard();
     g.setStartBord();
+    second_click = false;
+    wit_aan_de_beurt = true;
+    SchaakStuk* selected_figure = nullptr;
     update();
 }
 

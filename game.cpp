@@ -64,7 +64,11 @@ bool Game::move(SchaakStuk* s, int r, int k) {
         int old_k = old_pos.second;
         setPiece(r,k,s);
         deletePiece(old_r, old_k);
-
+        if(schaak(s->getKleur())){
+            setPiece(old_r, old_k, s);
+            deletePiece(r, k);
+            return false;
+        }
         return true;
     }
     else return false;
@@ -73,6 +77,26 @@ bool Game::move(SchaakStuk* s, int r, int k) {
 
 // Geeft true als kleur schaak staat
 bool Game::schaak(zw kleur) {
+    //check alle geldige zetten voor figuren van tegegestelde kleur
+    vector<pair<int,int>> gevaar;
+    for(auto figuur: speelbord){
+        if(figuur != nullptr){
+            if(figuur->getKleur() != kleur) {
+                vector<pair<int, int>> to_add = figuur->geldige_zetten(*this);
+                gevaar.reserve(gevaar.size() + to_add.size());
+                gevaar.insert(gevaar.end(), to_add.begin(), to_add.end());
+            }
+        }
+    }
+    //get positie van de koning
+    pair<int,int> pos = kleur == wit ? wk_pos : zk_pos;
+    //als positie van de koning zit in deze vector, return true
+    if(find(gevaar.begin(), gevaar.end(), pos) != gevaar.end()){
+        cout << "Schaak voor ";
+        if(kleur == wit) cout << "witte" << endl;
+        else cout << "zwarte" << endl;
+        return true;
+    }
     return false;
 }
 
@@ -120,6 +144,11 @@ void Game::setPiece(int r, int k, SchaakStuk* s)
 {
     int index = r*8 + k;
     speelbord[index] = s;
+    //check if koning()
+    if(typeid(*s) == typeid(Koning)){
+        if(s->getKleur() == wit) wk_pos = make_pair(r,k);
+        else zk_pos = make_pair(r,k);
+    }
     // Hier komt jouw code om een stuk neer te zetten op het bord
 }
 

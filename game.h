@@ -31,6 +31,8 @@ public:
     SchaakStuk* bezet(int index) const;
 private:
     vector<SchaakStuk*> speelbord;
+    pair<int,int> wk_pos;
+    pair<int,int> zk_pos;
     // Hier zet jij jouw datastructuur neer om het bord te bewaren ...
 };
 
