@@ -307,7 +307,8 @@ CMakeFiles/schaken.dir/SchaakGUI.cpp.obj: ../SchaakGUI.cpp \
   C:/Qt/5.15.2/mingw81_64/include/QtCore/qstring.h \
   ../guicode/fileIO.h \
   C:/Qt/5.15.2/mingw81_64/include/QtCore/QFile \
-  C:/Qt/5.15.2/mingw81_64/include/QtCore/qfile.h
+  C:/Qt/5.15.2/mingw81_64/include/QtCore/qfile.h \
+  C:/Qt/Tools/mingw810_64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/thread
 
 CMakeFiles/schaken.dir/SchaakStuk.cpp.obj: ../SchaakStuk.cpp \
   ../SchaakStuk.h \
@@ -5170,6 +5171,8 @@ C:/Qt/5.15.2/mingw81_64/include/QtCore/QString:
 
 C:/Qt/5.15.2/mingw81_64/include/QtCore/QFile:
 
+C:/Qt/Tools/mingw810_64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/thread:
+
 ../SchaakStuk.cpp:
 
 C:/Qt/5.15.2/mingw81_64/include/QtWidgets/qprogressbar.h:
@@ -5405,8 +5408,6 @@ C:/Qt/5.15.2/mingw81_64/include/QtCore/qtemporarydir.h:
 C:/Qt/5.15.2/mingw81_64/include/QtCore/qtextcodec.h:
 
 C:/Qt/Tools/mingw810_64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/future:
-
-C:/Qt/Tools/mingw810_64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/thread:
 
 C:/Qt/Tools/mingw810_64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/condition_variable:
 

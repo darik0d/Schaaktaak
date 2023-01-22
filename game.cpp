@@ -55,6 +55,7 @@ void Game::setStartBord() {
 // en verandert er niets aan het schaakbord.
 // Anders wordt de move uitgevoerd en wordt true teruggegeven
 bool Game::move(SchaakStuk* s, int r, int k) {
+    if(s == nullptr) return false;
     pair<int,int> pos = make_pair(r,k);
     vector<pair<int,int>> mog = s->geldige_zetten(*this);
     if(find(mog.begin(), mog.end(), pos) != mog.end()){
@@ -62,11 +63,12 @@ bool Game::move(SchaakStuk* s, int r, int k) {
         cout << "Oude positie " << old_pos.first << ", " << old_pos.second << endl;
         int old_r = old_pos.first;
         int old_k = old_pos.second;
+        SchaakStuk* old_piece = getPiece(r,k);
         setPiece(r,k,s);
         deletePiece(old_r, old_k);
         if(schaak(s->getKleur())){
             setPiece(old_r, old_k, s);
-            deletePiece(r, k);
+            setPiece(r,k,old_piece);
             return false;
         }
         return true;
@@ -102,14 +104,76 @@ bool Game::schaak(zw kleur) {
 
 // Geeft true als kleur schaakmat staat
 bool Game::schaakmat(zw kleur) {
-    return false;
+    if(schaak(kleur)) {
+    //bereken alle geldige zetten voor kleur
+    vector<pair<SchaakStuk*, vector<pair<int,int>>>> zetten; //vector van SchaakStuk + mogelijke zetten daarvan
+    for(auto figuur: speelbord){
+        if(figuur != nullptr){
+            if(figuur->getKleur() == kleur){
+                vector<pair<int,int>> to_add_dummy = figuur->geldige_zetten(*this);
+                vector<pair<SchaakStuk*, vector<pair<int,int>>>> to_add;
+                to_add.push_back(make_pair(figuur,to_add_dummy));
+                zetten.reserve(zetten.size() + to_add.size());
+                zetten.insert(zetten.end(), to_add.begin(), to_add.end());
+            }
+        }
+    }
+    //controleer alle moves
+    for(auto check: zetten){
+        for(auto pos: check.second){
+            pair<int,int> old_pos = check.first->getPosition(*this);
+            SchaakStuk* old_fig = getPiece(pos.first, pos.second);
+            if(move(check.first, pos.first, pos.second)) {
+                //return to old position
+                setPiece(old_pos.first, old_pos.second, check.first);
+                //return prev figure
+                setPiece(pos.first, pos.second, old_fig);
+                return false;
+            }
+        }
+    }
+        cout << "Schaakmat!!!" << endl;
+        return true;
+    }
+    else return false;
 }
 
 // Geeft true als kleur pat staat
 // (pat = geen geldige zet mogelijk, maar kleur staat niet schaak;
 // dit resulteert in een gelijkspel)
 bool Game::pat(zw kleur) {
-    return false;
+    //bereken alle geldige zetten voor kleur
+    vector<pair<SchaakStuk*, vector<pair<int,int>>>> zetten; //vector van SchaakStuk + mogelijke zetten daarvan
+    for(auto figuur: speelbord){
+        if(figuur != nullptr){
+            if(figuur->getKleur() == kleur){
+                vector<pair<int,int>> to_add_dummy = figuur->geldige_zetten(*this);
+                vector<pair<SchaakStuk*, vector<pair<int,int>>>> to_add;
+                to_add.push_back(make_pair(figuur,to_add_dummy));
+                zetten.reserve(zetten.size() + to_add.size());
+                zetten.insert(zetten.end(), to_add.begin(), to_add.end());
+            }
+        }
+    }
+    if(zetten.empty()) return true;
+    else {
+        //controleer alle moves
+        for(auto check: zetten){
+            for(auto pos: check.second){
+                pair<int,int> old_pos = check.first->getPosition(*this);
+                SchaakStuk* old_fig = getPiece(pos.first, pos.second);
+                if(move(check.first, pos.first, pos.second)) {
+                    //return to old position
+                    setPiece(old_pos.first, old_pos.second, check.first);
+                    //return prev figure
+                    setPiece(pos.first, pos.second, old_fig);
+                    return false;
+                }
+            }
+        }
+        cout << "Pat!!!" << endl;
+        return true;
+    }
 }
 void Game::deletePiece(int r, int k){
     if(0 < r < 8 && 0 < k < 8){
@@ -145,9 +209,11 @@ void Game::setPiece(int r, int k, SchaakStuk* s)
     int index = r*8 + k;
     speelbord[index] = s;
     //check if koning()
-    if(typeid(*s) == typeid(Koning)){
-        if(s->getKleur() == wit) wk_pos = make_pair(r,k);
-        else zk_pos = make_pair(r,k);
+    if(s != nullptr) {
+        if (typeid(*s) == typeid(Koning)) {
+            if (s->getKleur() == wit) wk_pos = make_pair(r, k);
+            else zk_pos = make_pair(r, k);
+        }
     }
     // Hier komt jouw code om een stuk neer te zetten op het bord
 }

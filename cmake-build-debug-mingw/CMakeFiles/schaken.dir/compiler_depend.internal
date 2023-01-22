@@ -309,6 +309,7 @@ CMakeFiles/schaken.dir/SchaakGUI.cpp.obj
  C:/Users/dasha/CLionProjects/codeBase_2/guicode/fileIO.h
  C:/Qt/5.15.2/mingw81_64/include/QtCore/QFile
  C:/Qt/5.15.2/mingw81_64/include/QtCore/qfile.h
+ C:/Qt/Tools/mingw810_64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/thread
 
 CMakeFiles/schaken.dir/SchaakStuk.cpp.obj
  C:/Users/dasha/CLionProjects/codeBase_2/SchaakStuk.cpp

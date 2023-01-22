@@ -5,6 +5,8 @@
 #include "SchaakGUI.h"
 #include "guicode/message.h"
 #include "guicode/fileIO.h"
+#include <chrono>
+#include <thread>
 
 // Constructor
 SchaakGUI::SchaakGUI():ChessWindow(nullptr) {
@@ -20,6 +22,7 @@ void SchaakGUI::clicked(int r, int k) {
     // Wat hier staat is slechts een voorbeeldje dat wordt afgespeeld ter illustratie.
     // Jouw code zal er helemaal anders uitzien en zal enkel de aanpassing in de spelpositie maken en er voor
     // zorgen dat de visualisatie (al dan niet via update) aangepast wordt.
+    //this_thread::sleep_for(std::chrono::milliseconds(100));
     removeAllMarking();
     if(!second_click){
         if(g.bezet(r,k) == nullptr) return;
@@ -43,6 +46,13 @@ void SchaakGUI::clicked(int r, int k) {
             update();
             cout << "wow, nice" << endl;
             wit_aan_de_beurt = !wit_aan_de_beurt;
+            zw kleurtje = wit_aan_de_beurt ? wit : zwart;
+            if(g.schaakmat(kleurtje)) {
+                message("Schaakmat!");
+            } else if(g.schaak(kleurtje)){
+                message("Schaak!");
+            }
+            else if(g.pat(kleurtje)) message("Pat!");
         }else{
             cout << "dat mag niet, bitch" << endl;
             message("Deze zet is ongeldig.");
@@ -153,7 +163,7 @@ void SchaakGUI::newGame(){
     g.setStartBord();
     second_click = false;
     wit_aan_de_beurt = true;
-    SchaakStuk* selected_figure = nullptr;
+    selected_figure = nullptr;
     update();
 }
 

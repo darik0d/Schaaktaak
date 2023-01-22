@@ -23,7 +23,7 @@ vector<pair<int,int>> Pion::geldige_zetten(Game& game)const{
     pair<int,int> pos = getPosition(game);
     if(getKleur() == wit){
         // check if start position
-        if(pos.first == 6 && game.bezet(pos.first - 2, pos.second) == nullptr){
+        if(pos.first == 6 && game.bezet(pos.first - 2, pos.second) == nullptr && game.bezet(pos.first - 1, pos.second) == nullptr){
                 wow.push_back(make_pair(pos.first-2,pos.second));
         }
         // check if move one forward
@@ -40,7 +40,7 @@ vector<pair<int,int>> Pion::geldige_zetten(Game& game)const{
     }else{
         //copy white, but another indices
         // check if start position
-        if(pos.first == 1 && game.bezet(pos.first + 2, pos.second) == nullptr){
+        if(pos.first == 1 && game.bezet(pos.first + 2, pos.second) == nullptr && game.bezet(pos.first + 1, pos.second) == nullptr){
             wow.push_back(make_pair(pos.first+2,pos.second));
         }
         // check if move one forward
