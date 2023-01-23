@@ -78,7 +78,7 @@ bool Game::move(SchaakStuk* s, int r, int k) {
 
 // Geeft true als kleur schaak staat
 bool Game::schaak(zw kleur) {
-    //check alle geldige zetten voor figuren van tegegestelde kleur
+    //check alle geldige zetten voor figuren van de tegengestelde kleur
     vector<pair<int,int>> gevaar;
     for(auto figuur: speelbord){
         if(figuur != nullptr){
@@ -235,19 +235,50 @@ vector<pair<int,int>> Game::mogelijke_zetten(zw kleur) {
     return zetten;
 }
 
-vector<pair<int,int>> Game::mogelijke_attack_zetten(zw kleur) {
+vector<pair<SchaakStuk*, vector<pair<int,int>>>> Game::mogelijke_zetten_met_figuren(zw kleur){
+    vector<pair<SchaakStuk*, vector<pair<int,int>>>> zetten;
     for(SchaakStuk* stuk: speelbord){
         if(stuk != nullptr){
             if(stuk->getKleur() == kleur){
                 vector<pair<int,int>> to_add = stuk->geldige_zetten(*this);
+                zetten.push_back(make_pair(stuk, to_add));
             }
         }
     }
-    vector<pair<int,int>> zetten = bedreigde_stukken;
     return zetten;
 }
 
 void Game::setSpeelbord(const vector<SchaakStuk *> &speelbord) {
     Game::speelbord = speelbord;
+}
+
+int Game::evaluatePosition(zw kleur) const{
+    int to_return = 0;
+    int coef = 0;
+    for(auto figuur:speelbord){
+        if(figuur != nullptr){
+            if(figuur->getKleur() == kleur) coef = 1;
+            else coef = -1;
+            if(typeid(*figuur) == typeid(Pion)) {
+                to_return += coef*10;
+            }
+            else if(typeid(*figuur) == typeid(Paard)) {
+                to_return += coef*30;
+            }
+            else if(typeid(*figuur) == typeid(Loper)) {
+                to_return += coef*30;
+            }
+            else if(typeid(*figuur) == typeid(Toren)) {
+                to_return += coef*50;
+            }
+            else if(typeid(*figuur) == typeid(Koningin)) {
+                to_return += coef*90;
+            }
+            else if(typeid(*figuur) == typeid(Koning)) {
+                to_return += coef*900;
+            }
+        }
+    }
+    return to_return;
 }
 

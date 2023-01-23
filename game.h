@@ -34,7 +34,8 @@ public:
     SchaakStuk* bezet(int row, int col) const;
     SchaakStuk* bezet(int index) const;
     vector<pair<int,int>> mogelijke_zetten(zw kleur);
-    vector<pair<int,int>> mogelijke_attack_zetten(zw kleur);
+    vector<pair<SchaakStuk*, vector<pair<int,int>>>> mogelijke_zetten_met_figuren(zw kleur);
+    int evaluatePosition(zw kleur) const;
 
 private:
     vector<SchaakStuk*> speelbord;

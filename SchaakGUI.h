@@ -29,6 +29,8 @@ private:
     void redo() override;
     void updateBedreigd();
     void visualizationChange() override;
+    pair<SchaakStuk*, pair<int,int>> besteZet(zw kleur);
+    void aiStap(zw kleur);
     int zet_nummer = 0;
     vector<vector<SchaakStuk*>> geschiedenis;
     bool stepForward(){

@@ -5,8 +5,14 @@
 #include "SchaakGUI.h"
 #include "guicode/message.h"
 #include "guicode/fileIO.h"
-#include <chrono>
+// voor time delay:
+//#include <chrono>
 #include <thread>
+
+bool ai_aan = true;
+
+zw ai_kleur[2] = {zwart,zwart};
+//kies tussen {zwart, wit} (voor geen AI), {wit, wit}, {zwart,zwart} of {wit, zwart}
 
 // Constructor
 SchaakGUI::SchaakGUI():ChessWindow(nullptr) {
@@ -21,6 +27,59 @@ void SchaakGUI::updateBedreigd(){
     g.mogelijke_zetten(wit);
     g.mogelijke_zetten(zwart);
     for(auto pos:g.bedreigde_stukken) setPieceThreat(pos.first, pos.second, displayThreats());
+    update();
+}
+pair<SchaakStuk*, pair<int,int>> SchaakGUI::besteZet(zw kleur){
+    pair<SchaakStuk*, pair<int,int>> to_return;
+    int prev_coef = 0;
+    int cur_coef = 0;
+    for(auto m: g.mogelijke_zetten_met_figuren(kleur)) {
+        //pair<SchaakStuk*, vector<pair<int,int>>>
+        for(auto pos: m.second){
+            //m.first is de stuk
+            SchaakStuk* old_stuk = g.getPiece(pos.first, pos.second);
+            pair<int,int> old_pos = m.first->getPosition(g);
+//            g.setPiece(old_pos.first, old_pos.second, nullptr);
+//            g.setPiece(pos.first, pos.second, m.first);
+            if(g.move(m.first, pos.first, pos.second)){
+                //evaluate pos
+                cur_coef = g.evaluatePosition(kleur);
+                //add schaakmat coef
+                zw antikleur = kleur == wit ? zwart : wit;
+                if(g.schaakmat(antikleur)) cur_coef += 3000;
+                //add schaak coef
+                if(g.schaak(antikleur)) cur_coef += 100;
+
+                //compare and if better, change
+                if(cur_coef >= prev_coef){
+                    prev_coef = cur_coef;
+                    to_return = make_pair(m.first, pos);
+                }
+                //return everything to the previous state
+                g.setPiece(old_pos.first, old_pos.second, m.first);
+                g.setPiece(pos.first, pos.second, old_stuk);
+            }
+        }
+    }
+    return to_return;
+}
+void SchaakGUI::aiStap(zw kleur){
+    //pak een random figuur en maak een willekeurige zet
+//    vector<pair<SchaakStuk*, vector<pair<int,int>>>> waarheen = g.mogelijke_zetten_met_figuren(kleur);
+//    int move_number = rand() % waarheen.size();
+//    pair<SchaakStuk*, vector<pair<int,int>>> element = waarheen[move_number];
+//    while (element.second.empty()){
+//        move_number = rand() % waarheen.size();
+//        element = waarheen[move_number];
+//    }
+//    g.move(element.first, element.second[0].first, element.second[0].second);
+
+    wit_aan_de_beurt = !wit_aan_de_beurt;
+    pair<SchaakStuk*, pair<int,int>> beste_move = besteZet(kleur);
+    g.move(beste_move.first, beste_move.second.first, beste_move.second.second);
+    clearBoard();
+    removeAllMarking();
+    updateBedreigd();
     update();
 }
 // Deze functie wordt opgeroepen telkens er op het schaakbord
@@ -63,7 +122,7 @@ void SchaakGUI::clicked(int r, int k) {
                 second_click = true;
             }
         } else{
-            message("Sorry, nu is niet uw beurt.");
+            message("Sorry, nu is de beurt van de andere kleur");
             updateBedreigd();
         }
     }else{
@@ -84,109 +143,12 @@ void SchaakGUI::clicked(int r, int k) {
             updateBedreigd();
             stepForward();
             update();
+            if(ai_aan) aiStap(kleurtje);
         }else{
             message("Deze zet is ongeldig.");
             updateBedreigd();
         }
     }
-//    // Volgende schaakstukken worden aangemaakt om het voorbeeld te illustreren.
-//    // In jouw geval zullen de stukken uit game g komen
-//    SchaakStuk* p1=new Pion(zwart);
-//    SchaakStuk* p2=new Pion(zwart);
-//    SchaakStuk* Q=new Koningin(zwart);
-//    SchaakStuk* K=new Koning(zwart);
-//
-//    SchaakStuk* p3=new Pion(wit);
-//    SchaakStuk* P=new Paard(wit);
-//    SchaakStuk* L=new Loper(wit);
-//    SchaakStuk* Kw=new Koning(wit);
-//
-//
-//    removeAllMarking();  // Alle markeringen weg
-//    clearBoard();        // Alle stukken weg
-//
-//    // plaats alle stukken
-//    setItem(3,0,P);
-//    setItem(1,1,p1);
-//    setItem(0,3,Q);
-//    setItem(0,4,K);
-//    setItem(2,4,p2);
-//    setItem(3,3,p3);
-//    setItem(2,7,L);
-//    setItem(5,3,Kw);
-//
-//    if (displayKills()) {
-//        // Markeer de stukken die je kan slaan
-//        setPieceThreat(3,0,true);
-//        setPieceThreat(3,3,true);
-//    }
-//    if (displayThreats()) {
-//        // Markeer jouw bedreigde stukken
-//        setPieceThreat(2,4,true);
-//        setPieceThreat(1,1,true);
-//    }
-//
-//    message("Illustratie voor click; zwart is aan de beurt");
-//
-//    removeAllPieceThreats();  // Eens een stuk gekozen is, worden alle bedreigde stukken niete langer gemarkeerd
-//    setTileSelect(2,4,true);  // De geselecteerde positie wordt steeds gemarkeerd
-//    if (displayMoves()) {
-//        // Geef de mogelijke zetten weer
-//        setTileFocus(3,3,true);
-//        setTileFocus(3,4,true);
-//    }
-//
-//    message("Illustratie na click; zwart kiest doelpositie");
-//
-//    clearBoard();
-//    removeAllMarking();
-//
-//    setItem(3,0,P);
-//    setItem(1,1,p1);
-//    setItem(0,3,Q);
-//    setItem(0,4,K);
-//    setItem(2,7,L);
-//    setItem(5,3,Kw);
-//    setItem(3,3,p2);
-//
-//    if (displayKills()) {
-//        setPieceThreat(2,4,true);
-//        setPieceThreat(1,1,true);
-//    }
-//    if (displayThreats()) {
-//        setPieceThreat(3,0,true);
-//    }
-//
-//
-//    message("Illustratie na doelpositie gekozen is; nu is wit aan de beurt");
-//
-//    removeAllPieceThreats();
-//
-//    setTileSelect(2,7,true);
-//    if (displayMoves()) {
-//        for (int r=0;r<8;r++) {
-//            if (r==2) continue;
-//            int c=7-abs(r-2);
-//            setTileFocus(r,c,true);
-//        }
-//    }
-//    if (displayThreats()) {
-//        setTileThreat(0,5,true);
-//        setTileThreat(3,6,true);
-//    }
-//
-//    message("Wit stuk geselecteerd; wit moet nu een doelpositie kiezen");
-//    removeAllMarking();
-//    // etc. etc. ...
-//
-//    delete p1;
-//    delete p2;
-//    delete Q;
-//    delete K;
-//    delete p3;
-//    delete P;
-//    delete L;
-//    delete Kw;
 }
 
 void SchaakGUI::newGame(){
@@ -254,7 +216,7 @@ void SchaakGUI::undo() {
     }
     --zet_nummer;
     g.setSpeelbord(geschiedenis[zet_nummer-1]);
-    wit_aan_de_beurt = !wit_aan_de_beurt;
+    if(!ai_aan) wit_aan_de_beurt = !wit_aan_de_beurt;
     clearBoard();
     removeAllMarking();
     update();
@@ -267,7 +229,7 @@ void SchaakGUI::redo() {
     }
     zet_nummer++;
     g.setSpeelbord(geschiedenis[zet_nummer-1]);
-    wit_aan_de_beurt = !wit_aan_de_beurt;
+    if(!ai_aan) wit_aan_de_beurt = !wit_aan_de_beurt;
     clearBoard();
     removeAllMarking();
     update();
