@@ -60,7 +60,6 @@ bool Game::move(SchaakStuk* s, int r, int k) {
     vector<pair<int,int>> mog = s->geldige_zetten(*this);
     if(find(mog.begin(), mog.end(), pos) != mog.end()){
         pair <int,int> old_pos = s->getPosition(*this);
-        cout << "Oude positie " << old_pos.first << ", " << old_pos.second << endl;
         int old_r = old_pos.first;
         int old_k = old_pos.second;
         SchaakStuk* old_piece = getPiece(r,k);
@@ -221,5 +220,32 @@ void Game::setPiece(int r, int k, SchaakStuk* s)
 const vector<SchaakStuk *> &Game::getSpeelbord() const {
     return speelbord;
 }
+
+vector<pair<int,int>> Game::mogelijke_zetten(zw kleur) {
+    vector<pair<int,int>> zetten;
+    for(SchaakStuk* stuk: speelbord){
+        if(stuk != nullptr){
+            if(stuk->getKleur() == kleur){
+                vector<pair<int,int>> to_add = stuk->geldige_zetten(*this);
+                zetten.reserve(zetten.size() + to_add.size());
+                zetten.insert(zetten.end(),to_add.begin(),to_add.end());
+            }
+        }
+    }
+    return zetten;
+}
+
+vector<pair<int,int>> Game::mogelijke_attack_zetten(zw kleur) {
+    for(SchaakStuk* stuk: speelbord){
+        if(stuk != nullptr){
+            if(stuk->getKleur() == kleur){
+                vector<pair<int,int>> to_add = stuk->geldige_zetten(*this);
+            }
+        }
+    }
+    vector<pair<int,int>> zetten = bedreigde_stukken;
+    return zetten;
+}
+
 
 

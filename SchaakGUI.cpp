@@ -14,7 +14,13 @@ SchaakGUI::SchaakGUI():ChessWindow(nullptr) {
     update();
 }
 
-
+void SchaakGUI::updateBedreigd(){
+    g.bedreigde_stukken.clear();
+    g.mogelijke_zetten(wit);
+    g.mogelijke_zetten(zwart);
+    for(auto pos:g.bedreigde_stukken) setPieceThreat(pos.first, pos.second, displayThreats());
+    update();
+}
 // Deze functie wordt opgeroepen telkens er op het schaakbord
 // geklikt wordt. x,y geeft de positie aan waar er geklikt
 // werd; r is de 0-based rij, k de 0-based kolom
@@ -23,28 +29,48 @@ void SchaakGUI::clicked(int r, int k) {
     // Jouw code zal er helemaal anders uitzien en zal enkel de aanpassing in de spelpositie maken en er voor
     // zorgen dat de visualisatie (al dan niet via update) aangepast wordt.
     //this_thread::sleep_for(std::chrono::milliseconds(100));
-    removeAllMarking();
     if(!second_click){
+        //display all threatened figures
         if(g.bezet(r,k) == nullptr) return;
+        removeAllMarking();
         if(g.bezet(r,k)->getKleur() == wit && wit_aan_de_beurt || g.bezet(r,k)->getKleur() == zwart && !wit_aan_de_beurt) {
             selected_figure = g.bezet(r, k);
             if (selected_figure != nullptr) {
                 setTileSelect(r, k, true);
-                for(auto x: selected_figure->geldige_zetten(g)){
-                    setTileFocus(x.first, x.second, true);
+                vector<pair<int,int>> to_go = selected_figure->geldige_zetten(g);
+                for(auto x: to_go){
+                    setTileFocus(x.first, x.second, displayMoves());
                 }
+                g.bedreigde_stukken.clear();
+                zw kleur = wit_aan_de_beurt ? zwart : wit;
+                for(auto try_pos: to_go){
+                    SchaakStuk* old_stuk = g.getPiece(try_pos.first, try_pos.second);
+                    g.setPiece(try_pos.first, try_pos.second, selected_figure);
+                    g.mogelijke_zetten(kleur);
+                    g.setPiece(r, k, selected_figure);
+                    g.setPiece(try_pos.first, try_pos.second, old_stuk);
+                }
+                vector<pair<int,int>> gevaar = g.bedreigde_stukken;
+                for(auto a: to_go){
+                    if(std::find(gevaar.begin(), gevaar.end(), a) != gevaar.end()) {
+                        setTileFocus(a.first, a.second, displayKills());
+                        setTileThreat(a.first, a.second, displayKills());
+                    }
+                }
+                update();
                 second_click = true;
             }
         } else{
             message("Sorry, nu is niet uw beurt.");
+            updateBedreigd();
         }
     }else{
         second_click = false;
+        removeAllMarking();
         if(g.move(selected_figure, r, k)){
             g.move(selected_figure, r, k);
             clearBoard();
             update();
-            cout << "wow, nice" << endl;
             wit_aan_de_beurt = !wit_aan_de_beurt;
             zw kleurtje = wit_aan_de_beurt ? wit : zwart;
             if(g.schaakmat(kleurtje)) {
@@ -53,9 +79,10 @@ void SchaakGUI::clicked(int r, int k) {
                 message("Schaak!");
             }
             else if(g.pat(kleurtje)) message("Pat!");
+            updateBedreigd();
         }else{
-            cout << "dat mag niet, bitch" << endl;
             message("Deze zet is ongeldig.");
+            updateBedreigd();
         }
     }
 //    // Volgende schaakstukken worden aangemaakt om het voorbeeld te illustreren.
@@ -160,6 +187,7 @@ void SchaakGUI::clicked(int r, int k) {
 
 void SchaakGUI::newGame(){
     clearBoard();
+    removeAllMarking();
     g.setStartBord();
     second_click = false;
     wit_aan_de_beurt = true;

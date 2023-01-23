@@ -27,6 +27,7 @@ private:
     void save() override;
     void undo() override;
     void redo() override;
+    void updateBedreigd();
     void visualizationChange() override;
 
 /*  Overgeerfde functies van ChessWindow:

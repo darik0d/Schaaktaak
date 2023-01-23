@@ -22,6 +22,7 @@ public:
     bool schaak(zw kleur);
     bool schaakmat(zw kleur);
     bool pat(zw kleur);
+    vector<pair<int,int>> bedreigde_stukken;
     void setStartBord();
     SchaakStuk* getPiece(int r, int k) const;
     const vector<SchaakStuk *> &getSpeelbord() const;
@@ -29,6 +30,9 @@ public:
     void setPiece(int r, int k, SchaakStuk* s);
     SchaakStuk* bezet(int row, int col) const;
     SchaakStuk* bezet(int index) const;
+    vector<pair<int,int>> mogelijke_zetten(zw kleur);
+    vector<pair<int,int>> mogelijke_attack_zetten(zw kleur);
+
 private:
     vector<SchaakStuk*> speelbord;
     pair<int,int> wk_pos;

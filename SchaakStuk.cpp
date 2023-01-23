@@ -33,9 +33,11 @@ vector<pair<int,int>> Pion::geldige_zetten(Game& game)const{
         // check if can attack
         if(pos.first != 0 && pos.second != 0 && game.bezet(pos.first - 1, pos.second - 1) != nullptr && game.bezet(pos.first - 1, pos.second - 1)->getKleur() == zwart){
             wow.push_back(make_pair(pos.first-1,pos.second - 1));
+            game.bedreigde_stukken.push_back(make_pair(pos.first-1,pos.second - 1));
         }
-        if(pos.first != 0 && pos.second != 7 && game.bezet(pos.first - 1, pos.second + 1) != nullptr && game.bezet(pos.first - 1, pos.second - 1)->getKleur() == zwart){
+        if(pos.first != 0 && pos.second != 7 && game.bezet(pos.first - 1, pos.second + 1) != nullptr && game.bezet(pos.first - 1, pos.second + 1)->getKleur() == zwart){
             wow.push_back(make_pair(pos.first-1,pos.second+1));
+            game.bedreigde_stukken.push_back(make_pair(pos.first-1,pos.second + 1));
         }
     }else{
         //copy white, but another indices
@@ -50,9 +52,11 @@ vector<pair<int,int>> Pion::geldige_zetten(Game& game)const{
         // check if can attack
         if(pos.first != 7 && pos.second != 0 && game.bezet(pos.first + 1, pos.second - 1) != nullptr && game.bezet(pos.first + 1, pos.second - 1)->getKleur() == wit){
             wow.push_back(make_pair(pos.first+1,pos.second - 1));
+            game.bedreigde_stukken.push_back(make_pair(pos.first+1,pos.second - 1));
         }
         if(pos.first != 7 && pos.second != 7 && game.bezet(pos.first + 1, pos.second + 1)  != nullptr && game.bezet(pos.first + 1, pos.second + 1)->getKleur() == wit){
             wow.push_back(make_pair(pos.first+1,pos.second+1));
+            game.bedreigde_stukken.push_back(make_pair(pos.first+1,pos.second+1));
         }
     }
     return wow;
@@ -69,6 +73,7 @@ vector<pair<int,int>> Toren::geldige_zetten(Game& game)const{
         }else{
             if(game.bezet(pos.first + i, pos.second)->getKleur() != getKleur()){
                 wow.push_back(make_pair(pos.first + i,pos.second));
+                game.bedreigde_stukken.push_back(make_pair(pos.first + i,pos.second));
             }
             break;
         }
@@ -80,6 +85,7 @@ vector<pair<int,int>> Toren::geldige_zetten(Game& game)const{
         }else{
             if(game.bezet(pos.first - i, pos.second)->getKleur() != getKleur()){
                 wow.push_back(make_pair(pos.first - i,pos.second));
+                game.bedreigde_stukken.push_back(make_pair(pos.first - i,pos.second));
             }
             break;
         }
@@ -91,6 +97,7 @@ vector<pair<int,int>> Toren::geldige_zetten(Game& game)const{
         }else{
             if(game.bezet(pos.first, pos.second + i)->getKleur() != getKleur()){
                 wow.push_back(make_pair(pos.first,pos.second + i));
+                game.bedreigde_stukken.push_back(make_pair(pos.first,pos.second + i));
             }
             break;
         }
@@ -102,6 +109,7 @@ vector<pair<int,int>> Toren::geldige_zetten(Game& game)const{
         }else{
             if(game.bezet(pos.first, pos.second - i)->getKleur() != getKleur()){
                 wow.push_back(make_pair(pos.first, pos.second - i));
+                game.bedreigde_stukken.push_back(make_pair(pos.first, pos.second - i));
             }
             break;
         }
@@ -119,6 +127,7 @@ vector<pair<int,int>> Loper::geldige_zetten(Game& game)const{
         }else{
             if(game.bezet(pos.first + i, pos.second+i)->getKleur() != getKleur()){
                 wow.push_back(make_pair(pos.first + i,pos.second+i));
+                game.bedreigde_stukken.push_back(make_pair(pos.first + i,pos.second+i));
             }
             break;
         }
@@ -129,6 +138,7 @@ vector<pair<int,int>> Loper::geldige_zetten(Game& game)const{
             wow.push_back(make_pair(pos.first - i,pos.second - i));
         }else{
             if(game.bezet(pos.first - i, pos.second - i)->getKleur() != getKleur()){
+                game.bedreigde_stukken.push_back(make_pair(pos.first - i,pos.second - i));
                 wow.push_back(make_pair(pos.first - i,pos.second - i));
             }
             break;
@@ -141,6 +151,7 @@ vector<pair<int,int>> Loper::geldige_zetten(Game& game)const{
         }else{
             if(game.bezet(pos.first - i, pos.second + i)->getKleur() != getKleur()){
                 wow.push_back(make_pair(pos.first - i,pos.second + i));
+                game.bedreigde_stukken.push_back(make_pair(pos.first - i,pos.second + i));
             }
             break;
         }
@@ -151,6 +162,7 @@ vector<pair<int,int>> Loper::geldige_zetten(Game& game)const{
             wow.push_back(make_pair(pos.first + i,pos.second - i));
         }else{
             if(game.bezet(pos.first + i, pos.second - i)->getKleur() != getKleur()){
+                game.bedreigde_stukken.push_back(make_pair(pos.first + i, pos.second - i));
                 wow.push_back(make_pair(pos.first + i, pos.second - i));
             }
             break;
@@ -163,14 +175,54 @@ vector<pair<int,int>> Paard::geldige_zetten(Game& game)const{
     pair<int,int> pos = getPosition(game);
     //geen verschil of dat wit of zwart is. Bij attack moeten de figuren wel verschillende kleuren hebben
     // Г
-    if(pos.first+2 < 8 && pos.second + 1 < 8 && (game.bezet(pos.first+2, pos.second+1) == nullptr || game.bezet(pos.first+2, pos.second+1)->getKleur() != getKleur())) wow.push_back(make_pair(pos.first+2, pos.second+1));
-    if(pos.first+2 < 8 && pos.second - 1 > -1 && (game.bezet(pos.first+2, pos.second-1) == nullptr || game.bezet(pos.first+2, pos.second-1)->getKleur() != getKleur())) wow.push_back(make_pair(pos.first+2, pos.second-1));
-    if(pos.first - 2 > -1 && pos.second + 1 < 8 && (game.bezet(pos.first-2, pos.second+1) == nullptr || game.bezet(pos.first-2, pos.second+1)->getKleur() != getKleur())) wow.push_back(make_pair(pos.first-2, pos.second+1));
-    if(pos.first - 2 > -1 && pos.second - 1 > -1 && (game.bezet(pos.first-2, pos.second-1) == nullptr || game.bezet(pos.first-2, pos.second-1)->getKleur() != getKleur())) wow.push_back(make_pair(pos.first-2, pos.second-1));
-    if(pos.first - 1 > -1 && pos.second + 2 < 8 && (game.bezet(pos.first-1, pos.second+2) == nullptr || game.bezet(pos.first-1, pos.second+2)->getKleur() != getKleur())) wow.push_back(make_pair(pos.first-1, pos.second+2));
-    if(pos.first + 1 < 8 && pos.second + 2 < 8 && (game.bezet(pos.first+1, pos.second+2) == nullptr || game.bezet(pos.first+1, pos.second+2)->getKleur() != getKleur())) wow.push_back(make_pair(pos.first+1, pos.second+2));
-    if(pos.first - 1 > -1 && pos.second - 2 > -1 && (game.bezet(pos.first-1, pos.second-2) == nullptr || game.bezet(pos.first-1, pos.second-2)->getKleur() != getKleur())) wow.push_back(make_pair(pos.first-1, pos.second-2));
-    if(pos.first + 1 < 8 && pos.second - 2 > -1 && (game.bezet(pos.first+1, pos.second-2) == nullptr || game.bezet(pos.first+1, pos.second-2)->getKleur() != getKleur())) wow.push_back(make_pair(pos.first+1, pos.second-2));
+    if(pos.first+2 < 8 && pos.second + 1 < 8 && (game.bezet(pos.first+2, pos.second+1) == nullptr)) wow.push_back(make_pair(pos.first+2, pos.second+1));
+    else if(pos.first+2 < 8 && pos.second + 1 < 8 && game.bezet(pos.first+2, pos.second+1)->getKleur() != getKleur()) {
+        wow.push_back(make_pair(pos.first+2, pos.second+1));
+        game.bedreigde_stukken.push_back(make_pair(pos.first+2, pos.second+1));
+    }
+
+    if(pos.first+2 < 8 && pos.second - 1 > -1 && (game.bezet(pos.first+2, pos.second-1) == nullptr)) wow.push_back(make_pair(pos.first+2, pos.second-1));
+    else if(pos.first+2 < 8 && pos.second - 1 > -1 && (game.bezet(pos.first+2, pos.second-1)->getKleur() != getKleur())) {
+        wow.push_back(make_pair(pos.first+2, pos.second-1));
+        game.bedreigde_stukken.push_back(make_pair(pos.first+2, pos.second-1));
+    }
+
+    if(pos.first - 2 > -1 && pos.second + 1 < 8 && (game.bezet(pos.first-2, pos.second+1) == nullptr)) wow.push_back(make_pair(pos.first-2, pos.second+1));
+    else if(pos.first - 2 > -1 && pos.second + 1 < 8 && (game.bezet(pos.first-2, pos.second+1)->getKleur() != getKleur())) {
+        wow.push_back(make_pair(pos.first-2, pos.second+1));
+        game.bedreigde_stukken.push_back(make_pair(pos.first-2, pos.second+1));
+    }
+
+    if(pos.first - 2 > -1 && pos.second - 1 > -1 && (game.bezet(pos.first-2, pos.second-1) == nullptr)) wow.push_back(make_pair(pos.first-2, pos.second-1));
+    else if(pos.first - 2 > -1 && pos.second - 1 > -1 && (game.bezet(pos.first-2, pos.second-1)->getKleur() != getKleur())) {
+        wow.push_back(make_pair(pos.first-2, pos.second-1));
+        game.bedreigde_stukken.push_back(make_pair(pos.first-2, pos.second-1));
+    }
+
+    if(pos.first - 1 > -1 && pos.second + 2 < 8 && (game.bezet(pos.first-1, pos.second+2) == nullptr)) wow.push_back(make_pair(pos.first-1, pos.second+2));
+    else if(pos.first - 1 > -1 && pos.second + 2 < 8 && (game.bezet(pos.first-1, pos.second+2)->getKleur() != getKleur())) {
+        wow.push_back(make_pair(pos.first-1, pos.second+2));
+        game.bedreigde_stukken.push_back(make_pair(pos.first-1, pos.second+2));
+    }
+
+    if(pos.first + 1 < 8 && pos.second + 2 < 8 && (game.bezet(pos.first+1, pos.second+2) == nullptr)) wow.push_back(make_pair(pos.first+1, pos.second+2));
+    else if(pos.first + 1 < 8 && pos.second + 2 < 8 && (game.bezet(pos.first+1, pos.second+2)->getKleur() != getKleur())) {
+        wow.push_back(make_pair(pos.first+1, pos.second+2));
+        game.bedreigde_stukken.push_back(make_pair(pos.first+1, pos.second+2));
+    }
+
+    if(pos.first - 1 > -1 && pos.second - 2 > -1 && (game.bezet(pos.first-1, pos.second-2) == nullptr)) wow.push_back(make_pair(pos.first-1, pos.second-2));
+    else if(pos.first - 1 > -1 && pos.second - 2 > -1 && (game.bezet(pos.first-1, pos.second-2)->getKleur() != getKleur())) {
+        wow.push_back(make_pair(pos.first-1, pos.second-2));
+        game.bedreigde_stukken.push_back(make_pair(pos.first-1, pos.second-2));
+    }
+
+    if(pos.first + 1 < 8 && pos.second - 2 > -1 && (game.bezet(pos.first+1, pos.second-2) == nullptr)) wow.push_back(make_pair(pos.first+1, pos.second-2));
+    else if(pos.first + 1 < 8 && pos.second - 2 > -1 && (game.bezet(pos.first+1, pos.second-2)->getKleur() != getKleur())) {
+        wow.push_back(make_pair(pos.first+1, pos.second-2));
+        game.bedreigde_stukken.push_back(make_pair(pos.first+1, pos.second-2));
+    }
+
     return wow;
 }
 vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
@@ -184,6 +236,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
         }else{
             if(game.bezet(pos.first + i, pos.second)->getKleur() != getKleur()){
                 wow.push_back(make_pair(pos.first + i,pos.second));
+                game.bedreigde_stukken.push_back(make_pair(pos.first + i,pos.second));
             }
             break;
         }
@@ -195,6 +248,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
         }else{
             if(game.bezet(pos.first - i, pos.second)->getKleur() != getKleur()){
                 wow.push_back(make_pair(pos.first - i,pos.second));
+                game.bedreigde_stukken.push_back(make_pair(pos.first - i,pos.second));
             }
             break;
         }
@@ -206,6 +260,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
         }else{
             if(game.bezet(pos.first, pos.second + i)->getKleur() != getKleur()){
                 wow.push_back(make_pair(pos.first,pos.second + i));
+                game.bedreigde_stukken.push_back(make_pair(pos.first,pos.second + i));
             }
             break;
         }
@@ -217,6 +272,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
         }else{
             if(game.bezet(pos.first, pos.second - i)->getKleur() != getKleur()){
                 wow.push_back(make_pair(pos.first, pos.second - i));
+                game.bedreigde_stukken.push_back(make_pair(pos.first, pos.second - i));
             }
             break;
         }
@@ -229,6 +285,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
         }else{
             if(game.bezet(pos.first + i, pos.second+i)->getKleur() != getKleur()){
                 wow.push_back(make_pair(pos.first + i,pos.second+i));
+                game.bedreigde_stukken.push_back(make_pair(pos.first + i,pos.second+i));
             }
             break;
         }
@@ -239,6 +296,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
             wow.push_back(make_pair(pos.first - i,pos.second - i));
         }else{
             if(game.bezet(pos.first - i, pos.second - i)->getKleur() != getKleur()){
+                game.bedreigde_stukken.push_back(make_pair(pos.first - i,pos.second - i));
                 wow.push_back(make_pair(pos.first - i,pos.second - i));
             }
             break;
@@ -251,6 +309,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
         }else{
             if(game.bezet(pos.first - i, pos.second + i)->getKleur() != getKleur()){
                 wow.push_back(make_pair(pos.first - i,pos.second + i));
+                game.bedreigde_stukken.push_back(make_pair(pos.first - i,pos.second + i));
             }
             break;
         }
@@ -261,6 +320,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
             wow.push_back(make_pair(pos.first + i,pos.second - i));
         }else{
             if(game.bezet(pos.first + i, pos.second - i)->getKleur() != getKleur()){
+                game.bedreigde_stukken.push_back(make_pair(pos.first + i, pos.second - i));
                 wow.push_back(make_pair(pos.first + i, pos.second - i));
             }
             break;
@@ -279,6 +339,7 @@ vector<pair<int,int>> Koning::geldige_zetten(Game& game) const{
                 }
                 else if(game.bezet(pos.first + i, pos.second + k)->getKleur() != getKleur()) {
                     wow.push_back(make_pair(pos.first+i, pos.second+k));
+                    game.bedreigde_stukken.push_back(make_pair(pos.first+i, pos.second+k));
                 }
             }
         }
