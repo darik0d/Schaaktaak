@@ -11,6 +11,8 @@
 // Constructor
 SchaakGUI::SchaakGUI():ChessWindow(nullptr) {
     g.setStartBord();
+    geschiedenis.push_back(g.getSpeelbord());
+    zet_nummer++;
     update();
 }
 
@@ -80,6 +82,8 @@ void SchaakGUI::clicked(int r, int k) {
             }
             else if(g.pat(kleurtje)) message("Pat!");
             updateBedreigd();
+            stepForward();
+            update();
         }else{
             message("Deze zet is ongeldig.");
             updateBedreigd();
@@ -189,6 +193,7 @@ void SchaakGUI::newGame(){
     clearBoard();
     removeAllMarking();
     g.setStartBord();
+    geschiedenis.push_back(g.getSpeelbord());
     second_click = false;
     wit_aan_de_beurt = true;
     selected_figure = nullptr;
@@ -243,10 +248,30 @@ void SchaakGUI::open() {
 
 
 void SchaakGUI::undo() {
-    message("Je hebt undo gekozen");
+    if(zet_nummer < 2) {
+        message("U kunt niet meer terug.");
+        return;
+    }
+    --zet_nummer;
+    g.setSpeelbord(geschiedenis[zet_nummer-1]);
+    wit_aan_de_beurt = !wit_aan_de_beurt;
+    clearBoard();
+    removeAllMarking();
+    update();
 }
 
-void SchaakGUI::redo() {}
+void SchaakGUI::redo() {
+    if(zet_nummer >= geschiedenis.size()){
+        message("Dit is de laatste bewaarde zet");
+        return;
+    }
+    zet_nummer++;
+    g.setSpeelbord(geschiedenis[zet_nummer-1]);
+    wit_aan_de_beurt = !wit_aan_de_beurt;
+    clearBoard();
+    removeAllMarking();
+    update();
+}
 
 
 void SchaakGUI::visualizationChange() {

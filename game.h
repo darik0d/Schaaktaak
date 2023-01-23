@@ -26,6 +26,9 @@ public:
     void setStartBord();
     SchaakStuk* getPiece(int r, int k) const;
     const vector<SchaakStuk *> &getSpeelbord() const;
+
+    void setSpeelbord(const vector<SchaakStuk *> &speelbord);
+
     void deletePiece(int r, int k);
     void setPiece(int r, int k, SchaakStuk* s);
     SchaakStuk* bezet(int row, int col) const;

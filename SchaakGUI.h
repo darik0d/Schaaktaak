@@ -29,6 +29,14 @@ private:
     void redo() override;
     void updateBedreigd();
     void visualizationChange() override;
+    int zet_nummer = 0;
+    vector<vector<SchaakStuk*>> geschiedenis;
+    bool stepForward(){
+        while(geschiedenis.size() != zet_nummer) geschiedenis.pop_back();
+        zet_nummer ++;
+        geschiedenis.push_back(g.getSpeelbord());
+        return true;
+    }
 
 /*  Overgeerfde functies van ChessWindow:
 

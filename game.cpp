@@ -247,5 +247,7 @@ vector<pair<int,int>> Game::mogelijke_attack_zetten(zw kleur) {
     return zetten;
 }
 
-
+void Game::setSpeelbord(const vector<SchaakStuk *> &speelbord) {
+    Game::speelbord = speelbord;
+}
 
