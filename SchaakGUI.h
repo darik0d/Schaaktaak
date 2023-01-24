@@ -29,6 +29,7 @@ private:
     void redo() override;
     void updateBedreigd();
     void visualizationChange() override;
+    pair<int, pair<SchaakStuk*, pair<int,int>>> besteZetZonderRecursie(zw kleur);
     pair<SchaakStuk*, pair<int,int>> besteZet(zw kleur);
     void aiStap(zw kleur);
     int zet_nummer = 0;

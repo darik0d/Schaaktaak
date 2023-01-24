@@ -93,9 +93,9 @@ bool Game::schaak(zw kleur) {
     pair<int,int> pos = kleur == wit ? wk_pos : zk_pos;
     //als positie van de koning zit in deze vector, return true
     if(find(gevaar.begin(), gevaar.end(), pos) != gevaar.end()){
-        cout << "Schaak voor ";
-        if(kleur == wit) cout << "witte" << endl;
-        else cout << "zwarte" << endl;
+//        cout << "Schaak voor ";
+//        if(kleur == wit) cout << "witte" << endl;
+//        else cout << "zwarte" << endl;
         return true;
     }
     return false;
@@ -131,7 +131,7 @@ bool Game::schaakmat(zw kleur) {
             }
         }
     }
-        cout << "Schaakmat!!!" << endl;
+        //cout << "Schaakmat!!!" << endl;
         return true;
     }
     else return false;
@@ -170,7 +170,7 @@ bool Game::pat(zw kleur) {
                 }
             }
         }
-        cout << "Pat!!!" << endl;
+        //cout << "Pat!!!" << endl;
         return true;
     }
 }

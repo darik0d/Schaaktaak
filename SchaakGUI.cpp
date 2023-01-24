@@ -29,10 +29,12 @@ void SchaakGUI::updateBedreigd(){
     for(auto pos:g.bedreigde_stukken) setPieceThreat(pos.first, pos.second, displayThreats());
     update();
 }
-pair<SchaakStuk*, pair<int,int>> SchaakGUI::besteZet(zw kleur){
-    pair<SchaakStuk*, pair<int,int>> to_return;
+pair<int,pair<SchaakStuk*, pair<int,int>>> SchaakGUI::besteZetZonderRecursie(zw kleur){
+    //pair<SchaakStuk*, pair<int,int>> to_return;
+    vector<pair<SchaakStuk*, pair<int,int>>> to_return;
     int prev_coef = 0;
     int cur_coef = 0;
+    bool first_time = true;
     for(auto m: g.mogelijke_zetten_met_figuren(kleur)) {
         //pair<SchaakStuk*, vector<pair<int,int>>>
         for(auto pos: m.second){
@@ -50,10 +52,25 @@ pair<SchaakStuk*, pair<int,int>> SchaakGUI::besteZet(zw kleur){
                 //add schaak coef
                 if(g.schaak(antikleur)) cur_coef += 100;
 
+                //get the best coef of the opposite
+//                int anti_coef = besteZetZonderRecursie(antikleur).first;
+//                cur_coef -= anti_coef;
+
                 //compare and if better, change
-                if(cur_coef >= prev_coef){
+                if(!first_time && m.first != nullptr){ //Controleer of dat is de eerste keer
+                    //Bij de tweede en volgende keren moet je nagaan of dat een goede coef is
+                    if(cur_coef == prev_coef){
+                        prev_coef = cur_coef;
+                        to_return.push_back(make_pair(m.first, pos));
+                    }else if(cur_coef > prev_coef){
+                        prev_coef = cur_coef;
+                        to_return.clear();
+                        to_return.push_back(make_pair(m.first, pos));
+                    }
+                } else{ // Als dat de eerste keer is, set prev_coef aan cur_coef + push de mogelijk aan de return
+                    first_time = false;
                     prev_coef = cur_coef;
-                    to_return = make_pair(m.first, pos);
+                    to_return.push_back(make_pair(m.first, pos));
                 }
                 //return everything to the previous state
                 g.setPiece(old_pos.first, old_pos.second, m.first);
@@ -61,22 +78,75 @@ pair<SchaakStuk*, pair<int,int>> SchaakGUI::besteZet(zw kleur){
             }
         }
     }
-    return to_return;
+    return make_pair(prev_coef, to_return[rand() % to_return.size()]);
+}
+pair<SchaakStuk*, pair<int,int>> SchaakGUI::besteZet(zw kleur){
+    vector<pair<SchaakStuk*, pair<int,int>>> to_return;
+    int prev_coef;
+    bool first_time = true;
+    int cur_coef = 0;
+    vector<pair<SchaakStuk *, vector<pair<int, int>>>> mog_zetten = g.mogelijke_zetten_met_figuren(kleur);
+    for(auto m: mog_zetten) {
+        //pair<SchaakStuk*, vector<pair<int,int>>>
+        for(auto pos: m.second){
+            //m.first is de stuk
+            SchaakStuk* old_stuk = g.getPiece(pos.first, pos.second);
+            pair<int,int> old_pos = m.first->getPosition(g);
+            if(g.move(m.first, pos.first, pos.second)){
+                //evaluate pos
+                cur_coef = g.evaluatePosition(kleur);
+                //add schaakmat coef
+                zw antikleur = kleur == wit ? zwart : wit;
+                if(g.schaakmat(antikleur)) cur_coef += 3000;
+                //add schaak coef
+                if(g.schaak(antikleur)) cur_coef += 100;
+
+                //get the best coef of the opposite
+                int anti_coef = besteZetZonderRecursie(antikleur).first;
+                cur_coef -= anti_coef;
+
+                //compare and if better, change
+                if(!first_time && m.first != nullptr){ //Controleer of dat is de eerste keer
+                    //Bij de tweede en volgende keren moet je nagaan of dat een goede coef is
+                    if(cur_coef == prev_coef){
+                        prev_coef = cur_coef;
+                        to_return.push_back(make_pair(m.first, pos));
+                    }else if(cur_coef > prev_coef){
+                        prev_coef = cur_coef;
+                        to_return.clear();
+                        to_return.push_back(make_pair(m.first, pos));
+                }
+                } else{ // Als dat de eerste keer is, set prev_coef aan cur_coef + push de mogelijk aan de return
+                    first_time = false;
+                    prev_coef = cur_coef;
+                    to_return.push_back(make_pair(m.first, pos));
+                }
+                //return everything to the previous state
+                g.setPiece(old_pos.first, old_pos.second, m.first);
+                g.setPiece(pos.first, pos.second, old_stuk);
+            }
+        }
+    }
+
+    if(to_return.empty()){ // Einde van het spel
+        this_thread::sleep_for(std::chrono::milliseconds(1000));
+        cout << "Tot volgende keer!" << endl;
+    }
+    return to_return[rand() % to_return.size()];
 }
 void SchaakGUI::aiStap(zw kleur){
-    //pak een random figuur en maak een willekeurige zet
-//    vector<pair<SchaakStuk*, vector<pair<int,int>>>> waarheen = g.mogelijke_zetten_met_figuren(kleur);
-//    int move_number = rand() % waarheen.size();
-//    pair<SchaakStuk*, vector<pair<int,int>>> element = waarheen[move_number];
-//    while (element.second.empty()){
-//        move_number = rand() % waarheen.size();
-//        element = waarheen[move_number];
-//    }
-//    g.move(element.first, element.second[0].first, element.second[0].second);
-
     wit_aan_de_beurt = !wit_aan_de_beurt;
     pair<SchaakStuk*, pair<int,int>> beste_move = besteZet(kleur);
     g.move(beste_move.first, beste_move.second.first, beste_move.second.second);
+
+    //check special cases:
+    zw kleurtje = kleur == wit ? zwart : wit;
+    if(g.schaakmat(kleurtje)) {
+        message("Schaakmat!");
+    } else if(g.schaak(kleurtje)){
+        message("Schaak!");
+    } else if(g.pat(kleurtje)) message("Pat!");
+
     clearBoard();
     removeAllMarking();
     updateBedreigd();
