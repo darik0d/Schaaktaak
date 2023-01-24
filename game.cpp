@@ -252,30 +252,43 @@ void Game::setSpeelbord(const vector<SchaakStuk *> &speelbord) {
     Game::speelbord = speelbord;
 }
 
-int Game::evaluatePosition(zw kleur) const{
-    int to_return = 0;
+double Game::evaluatePosition(zw kleur){
+    double to_return = 0;
     int coef = 0;
     for(auto figuur:speelbord){
         if(figuur != nullptr){
             if(figuur->getKleur() == kleur) coef = 1;
             else coef = -1;
+            pair<int,int> pos = figuur->getPosition(*this);
             if(typeid(*figuur) == typeid(Pion)) {
                 to_return += coef*10;
+                if(figuur->getKleur() == wit) to_return += coef*pawnW[pos.first][pos.second];
+                else to_return += coef*pawnZ[pos.first][pos.second];
             }
             else if(typeid(*figuur) == typeid(Paard)) {
                 to_return += coef*30;
+                if(figuur->getKleur() == wit) to_return += coef*paardW[pos.first][pos.second];
+                else to_return += coef*paardZ[pos.first][pos.second];
             }
             else if(typeid(*figuur) == typeid(Loper)) {
                 to_return += coef*30;
+//                if(figuur->getKleur() == wit) to_return += coef*loperW[pos.first][pos.second];
+//                else to_return += coef*loperZ[pos.first][pos.second];
             }
             else if(typeid(*figuur) == typeid(Toren)) {
                 to_return += coef*50;
+//                if(figuur->getKleur() == wit) to_return += coef*torenW[pos.first][pos.second];
+//                else to_return += coef*torenZ[pos.first][pos.second];
             }
             else if(typeid(*figuur) == typeid(Koningin)) {
                 to_return += coef*90;
+//                if(figuur->getKleur() == wit) to_return += coef*koninginW[pos.first][pos.second];
+//                else to_return += coef*koninginZ[pos.first][pos.second];
             }
             else if(typeid(*figuur) == typeid(Koning)) {
                 to_return += coef*900;
+//                if(figuur->getKleur() == wit) to_return += coef*koningW[pos.first][pos.second];
+//                else to_return += coef*koningZ[pos.first][pos.second];
             }
         }
     }

@@ -11,14 +11,17 @@
 
 bool ai_aan = true;
 
-zw ai_kleur[2] = {zwart,zwart};
+zw ai_kleur[2] = {zwart, zwart};
 //kies tussen {zwart, wit} (voor geen AI), {wit, wit}, {zwart,zwart} of {wit, zwart}
 
 // Constructor
 SchaakGUI::SchaakGUI():ChessWindow(nullptr) {
     g.setStartBord();
     geschiedenis.push_back(g.getSpeelbord());
-    zet_nummer++;
+    zet_nummer = 0;
+    stepForward();
+    if(ai_kleur[0] != ai_kleur[1]) ai_aan = false;
+    if(ai_kleur[0] == wit and ai_kleur[1] != zwart) aiStap(wit);
     update();
 }
 
@@ -41,8 +44,6 @@ pair<int,pair<SchaakStuk*, pair<int,int>>> SchaakGUI::besteZetZonderRecursie(zw 
             //m.first is de stuk
             SchaakStuk* old_stuk = g.getPiece(pos.first, pos.second);
             pair<int,int> old_pos = m.first->getPosition(g);
-//            g.setPiece(old_pos.first, old_pos.second, nullptr);
-//            g.setPiece(pos.first, pos.second, m.first);
             if(g.move(m.first, pos.first, pos.second)){
                 //evaluate pos
                 cur_coef = g.evaluatePosition(kleur);
@@ -50,7 +51,7 @@ pair<int,pair<SchaakStuk*, pair<int,int>>> SchaakGUI::besteZetZonderRecursie(zw 
                 zw antikleur = kleur == wit ? zwart : wit;
                 if(g.schaakmat(antikleur)) cur_coef += 3000;
                 //add schaak coef
-                if(g.schaak(antikleur)) cur_coef += 100;
+                if(g.schaak(antikleur)) cur_coef += 50;
 
                 //get the best coef of the opposite
 //                int anti_coef = besteZetZonderRecursie(antikleur).first;
@@ -99,7 +100,7 @@ pair<SchaakStuk*, pair<int,int>> SchaakGUI::besteZet(zw kleur){
                 zw antikleur = kleur == wit ? zwart : wit;
                 if(g.schaakmat(antikleur)) cur_coef += 3000;
                 //add schaak coef
-                if(g.schaak(antikleur)) cur_coef += 100;
+                if(g.schaak(antikleur)) cur_coef += 50;
 
                 //get the best coef of the opposite
                 int anti_coef = besteZetZonderRecursie(antikleur).first;
@@ -146,11 +147,11 @@ void SchaakGUI::aiStap(zw kleur){
     } else if(g.schaak(kleurtje)){
         message("Schaak!");
     } else if(g.pat(kleurtje)) message("Pat!");
-
     clearBoard();
     removeAllMarking();
     updateBedreigd();
     update();
+    stepForward();
 }
 // Deze functie wordt opgeroepen telkens er op het schaakbord
 // geklikt wordt. x,y geeft de positie aan waar er geklikt
@@ -160,6 +161,13 @@ void SchaakGUI::clicked(int r, int k) {
     // Jouw code zal er helemaal anders uitzien en zal enkel de aanpassing in de spelpositie maken en er voor
     // zorgen dat de visualisatie (al dan niet via update) aangepast wordt.
     //this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    if(ai_kleur[0] == wit and ai_kleur[1] == zwart) {
+        zw kleur = wit_aan_de_beurt ? wit : zwart;
+        aiStap(kleur);
+        stepForward();
+        return;
+    }
     if(!second_click){
         //display all threatened figures
         if(g.bezet(r,k) == nullptr) return;
@@ -229,6 +237,11 @@ void SchaakGUI::newGame(){
     second_click = false;
     wit_aan_de_beurt = true;
     selected_figure = nullptr;
+    // Stel zet nummer = 0 als je geen undo van het nieuwe spel wil
+    //zet_nummer = 0
+    stepForward();
+    if(ai_kleur[0] == zwart and ai_kleur[1] == wit) ai_aan = false;
+    if(ai_kleur[0] == wit) aiStap(wit);
     update();
 }
 
@@ -284,9 +297,14 @@ void SchaakGUI::undo() {
         message("U kunt niet meer terug.");
         return;
     }
-    --zet_nummer;
+    zet_nummer--;
+    if(!ai_aan) {
+        wit_aan_de_beurt = !wit_aan_de_beurt;
+    }
+    else{ // doe de stap van AI
+        zet_nummer--;
+    }
     g.setSpeelbord(geschiedenis[zet_nummer-1]);
-    if(!ai_aan) wit_aan_de_beurt = !wit_aan_de_beurt;
     clearBoard();
     removeAllMarking();
     update();
@@ -298,8 +316,12 @@ void SchaakGUI::redo() {
         return;
     }
     zet_nummer++;
+    if(!ai_aan) {
+        wit_aan_de_beurt = !wit_aan_de_beurt;
+    }else{
+        zet_nummer++;
+    }
     g.setSpeelbord(geschiedenis[zet_nummer-1]);
-    if(!ai_aan) wit_aan_de_beurt = !wit_aan_de_beurt;
     clearBoard();
     removeAllMarking();
     update();
