@@ -1,6 +1,7 @@
-//  Student:
-//  Rolnummer:
-//  Opmerkingen: (bvb aanpassingen van de opgave)
+//  Student: Daria Matviichuk
+//  Rolnummer: s0221485
+//  Opmerkingen: In SchaakGUI.cpp kunt u kiezen voor welke kleur AI speelt
+//  (daarvoor moet u de inhoud van ai_kleur aanpassen, zie lijn 10)
 //
 
 #include "game.h"
@@ -15,12 +16,12 @@ Game::~Game() {}
 
 // Zet het bord klaar; voeg de stukken op de jusite plaats toe
 void Game::setStartBord() {
-    //maak een leeg bord aan
+    // Maak een leeg bord aan
     speelbord.clear();
     for(int i = 0; i < 64; i++){
         speelbord.push_back(nullptr);
     }
-    //set zwarte schaakstukken
+    // Zet alle zwarte schaakstukken
     for(int i = 0; i < 8; i++){
         setPiece(1, i, new Pion(zwart));
     }
@@ -32,7 +33,7 @@ void Game::setStartBord() {
     setPiece(0, 5, new Loper(zwart));
     setPiece(0, 3, new Koningin(zwart));
     setPiece(0, 4, new Koning(zwart));
-    //set witte schaakstukken
+    // Zet alle witte schaakstukken
     for(int i = 0; i < 8; i++){
         setPiece(6, i, new Pion(wit));
     }
@@ -45,19 +46,18 @@ void Game::setStartBord() {
     setPiece(7, 3, new Koningin(wit));
     setPiece(7, 4, new Koning(wit));
 
-    SchaakStuk* s= getPiece(1,0); // Zwarte pion
-    vector<pair<int,int>> v=s->geldige_zetten(*this);
-    //move(s,2,0); // Geeft true; het stuk wordt verplaatst
-    //move(s,5,1);
 }
 // Verplaats stuk s naar positie (r,k)
 // Als deze move niet mogelijk is, wordt false teruggegeven
 // en verandert er niets aan het schaakbord.
 // Anders wordt de move uitgevoerd en wordt true teruggegeven
 bool Game::move(SchaakStuk* s, int r, int k) {
-    if(s == nullptr) return false;
+    if(s == nullptr) return false; // Een leeg schaakstuk kan niet worden verplaatst
+
     pair<int,int> pos = make_pair(r,k);
+    // Verzamel alle mogelijke zetten (zonder na te gaan of er een schaak is)
     vector<pair<int,int>> mog = s->geldige_zetten(*this);
+    // Ga na of de zet mogelijk is
     if(find(mog.begin(), mog.end(), pos) != mog.end()){
         pair <int,int> old_pos = s->getPosition(*this);
         int old_r = old_pos.first;
@@ -65,6 +65,7 @@ bool Game::move(SchaakStuk* s, int r, int k) {
         SchaakStuk* old_piece = getPiece(r,k);
         setPiece(r,k,s);
         deletePiece(old_r, old_k);
+        // Als de zet tot de schaak van eigen kleur leidt, is de zet onmogelijk
         if(schaak(s->getKleur())){
             setPiece(old_r, old_k, s);
             setPiece(r,k,old_piece);
@@ -78,7 +79,7 @@ bool Game::move(SchaakStuk* s, int r, int k) {
 
 // Geeft true als kleur schaak staat
 bool Game::schaak(zw kleur) {
-    //check alle geldige zetten voor figuren van de tegengestelde kleur
+    // Check alle geldige zetten voor figuren van de tegengestelde kleur
     vector<pair<int,int>> gevaar;
     for(auto figuur: speelbord){
         if(figuur != nullptr){
@@ -89,23 +90,18 @@ bool Game::schaak(zw kleur) {
             }
         }
     }
-    //get positie van de koning
+    // Neem positie van de koning
     pair<int,int> pos = kleur == wit ? wk_pos : zk_pos;
-    //als positie van de koning zit in deze vector, return true
-    if(find(gevaar.begin(), gevaar.end(), pos) != gevaar.end()){
-//        cout << "Schaak voor ";
-//        if(kleur == wit) cout << "witte" << endl;
-//        else cout << "zwarte" << endl;
-        return true;
-    }
-    return false;
+    // Als positie van de koning zit in deze vector, return true
+    if(find(gevaar.begin(), gevaar.end(), pos) != gevaar.end()) return true;
+    else return false;
 }
 
 // Geeft true als kleur schaakmat staat
 bool Game::schaakmat(zw kleur) {
     if(schaak(kleur)) {
-    //bereken alle geldige zetten voor kleur
-    vector<pair<SchaakStuk*, vector<pair<int,int>>>> zetten; //vector van SchaakStuk + mogelijke zetten daarvan
+    // Bereken alle geldige zetten voor kleur
+    vector<pair<SchaakStuk*, vector<pair<int,int>>>> zetten; // Vector van SchaakStuk + mogelijke zetten daarvan
     for(auto figuur: speelbord){
         if(figuur != nullptr){
             if(figuur->getKleur() == kleur){
@@ -117,15 +113,14 @@ bool Game::schaakmat(zw kleur) {
             }
         }
     }
-    //controleer alle moves
+    // Controleer alle zetten
     for(auto check: zetten){
         for(auto pos: check.second){
             pair<int,int> old_pos = check.first->getPosition(*this);
             SchaakStuk* old_fig = getPiece(pos.first, pos.second);
             if(move(check.first, pos.first, pos.second)) {
-                //return to old position
+                // Zet alles terug
                 setPiece(old_pos.first, old_pos.second, check.first);
-                //return prev figure
                 setPiece(pos.first, pos.second, old_fig);
                 return false;
             }
@@ -141,7 +136,7 @@ bool Game::schaakmat(zw kleur) {
 // (pat = geen geldige zet mogelijk, maar kleur staat niet schaak;
 // dit resulteert in een gelijkspel)
 bool Game::pat(zw kleur) {
-    //bereken alle geldige zetten voor kleur
+    // Bereken alle geldige zetten voor kleur
     vector<pair<SchaakStuk*, vector<pair<int,int>>>> zetten; //vector van SchaakStuk + mogelijke zetten daarvan
     for(auto figuur: speelbord){
         if(figuur != nullptr){
@@ -156,15 +151,14 @@ bool Game::pat(zw kleur) {
     }
     if(zetten.empty()) return true;
     else {
-        //controleer alle moves
+        // Controleer alle zetten
         for(auto check: zetten){
             for(auto pos: check.second){
                 pair<int,int> old_pos = check.first->getPosition(*this);
                 SchaakStuk* old_fig = getPiece(pos.first, pos.second);
                 if(move(check.first, pos.first, pos.second)) {
-                    //return to old position
+                    // Zet alles terug
                     setPiece(old_pos.first, old_pos.second, check.first);
-                    //return prev figure
                     setPiece(pos.first, pos.second, old_fig);
                     return false;
                 }
@@ -253,6 +247,7 @@ void Game::setSpeelbord(const vector<SchaakStuk *> &speelbord) {
 }
 
 double Game::evaluatePosition(zw kleur){
+    // Evalueer het bord aan de hand van aan-/afwezigheid van stukken en hun positie
     double to_return = 0;
     int coef = 0;
     for(auto figuur:speelbord){

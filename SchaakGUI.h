@@ -1,6 +1,6 @@
 //
 // Created by toonc on 12/17/2021.
-//
+// en bewerkt door Daria op 25/01/2023
 
 #ifndef SCHAKEN_SCHAAKGUI_H
 #define SCHAKEN_SCHAAKGUI_H
@@ -29,17 +29,13 @@ private:
     void redo() override;
     void updateBedreigd();
     void visualizationChange() override;
-    pair<int, pair<SchaakStuk*, pair<int,int>>> besteZetZonderRecursie(zw kleur);
+    pair<int, pair<SchaakStuk*, pair<int,int>>> besteZetDeelTwee(zw kleur);
+    pair<int,pair<SchaakStuk*, pair<int,int>>> besteZetDeelDrie(zw kleur);
     pair<SchaakStuk*, pair<int,int>> besteZet(zw kleur);
     void aiStap(zw kleur);
+    bool stepForward();
     int zet_nummer = 0;
     vector<vector<SchaakStuk*>> geschiedenis;
-    bool stepForward(){
-        while(geschiedenis.size() != zet_nummer) geschiedenis.pop_back();
-        zet_nummer ++;
-        geschiedenis.push_back(g.getSpeelbord());
-        return true;
-    }
 
 /*  Overgeerfde functies van ChessWindow:
 

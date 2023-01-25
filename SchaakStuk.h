@@ -1,6 +1,7 @@
-//  Student:
-//  Rolnummer:
-//  Opmerkingen: (bvb aanpassingen van de opgave)
+//  Student: Daria Matviichuk
+//  Rolnummer: s0221485
+//  Opmerkingen: In SchaakGUI.cpp kunt u kiezen voor welke kleur AI speelt
+//  (daarvoor moet u de inhoud van ai_kleur aanpassen, zie lijn 10)
 //
 
 #ifndef SCHAKEN_SCHAAKSTUK_H

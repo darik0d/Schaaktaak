@@ -1,6 +1,7 @@
-//  Student:
-//  Rolnummer:
-//  Opmerkingen: (bvb aanpassingen van de opgave)
+//  Student: Daria Matviichuk
+//  Rolnummer: s0221485
+//  Opmerkingen: In SchaakGUI.cpp kunt u kiezen voor welke kleur AI speelt
+//  (daarvoor moet u de inhoud van ai_kleur aanpassen, zie lijn 10)
 //
 
 #include "SchaakStuk.h"
@@ -228,8 +229,8 @@ vector<pair<int,int>> Paard::geldige_zetten(Game& game)const{
 vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
     vector<pair<int,int>> wow;
     pair<int,int> pos = getPosition(game);
-    //geen verschil of dat wit of zwart is. Bij attack moeten de figuren wel verschillende kleuren hebben
-    //loop over boven
+    // Geen verschil of dat wit of zwart is. Bij attack moeten de figuren wel verschillende kleuren hebben
+    // Loop over boven
     for(int i = 1; pos.first + i < 8;i++){
         if(game.bezet(pos.first+i, pos.second) == nullptr){
             wow.push_back(make_pair(pos.first + i,pos.second));
@@ -241,7 +242,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
             break;
         }
     }
-    //loop over beneden
+    // Loop over beneden
     for(int i = 1; pos.first - i >= 0;i++){
         if(game.bezet(pos.first - i, pos.second) == nullptr){
             wow.push_back(make_pair(pos.first - i,pos.second));
@@ -253,7 +254,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
             break;
         }
     }
-    //loop over rechts
+    // Loop over rechts
     for(int i = 1; pos.second + i < 8;i++){
         if(game.bezet(pos.first, pos.second + i) == nullptr){
             wow.push_back(make_pair(pos.first,pos.second + i));
@@ -265,7 +266,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
             break;
         }
     }
-    //loop naar links
+    // Loop naar links
     for(int i = 1; pos.second - i >= 0; i++){
         if(game.bezet(pos.first, pos.second - i) == nullptr){
             wow.push_back(make_pair(pos.first,pos.second - i));
@@ -277,8 +278,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
             break;
         }
     }
-    //geen verschil of dat wit of zwart is. Bij attack moeten de figuren wel verschillende kleuren hebben
-    //loop over boven + rechts
+    // Loop over boven + rechts
     for(int i = 1; pos.first + i < 8 && pos.second + i < 8;i++){
         if(game.bezet(pos.first+i, pos.second+i) == nullptr){
             wow.push_back(make_pair(pos.first + i,pos.second+i));
@@ -290,7 +290,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
             break;
         }
     }
-    //loop over beneden - links
+    // Loop over beneden - links
     for(int i = 1; pos.first - i >= 0 && pos.second - i >= 0;i++){
         if(game.bezet(pos.first - i, pos.second - i) == nullptr){
             wow.push_back(make_pair(pos.first - i,pos.second - i));
@@ -302,7 +302,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
             break;
         }
     }
-    //loop over beneden - rechts
+    // Loop over beneden - rechts
     for(int i = 1; pos.first - i >= 0 && pos.second + i < 8;i++){
         if(game.bezet(pos.first - i, pos.second + i) == nullptr){
             wow.push_back(make_pair(pos.first - i,pos.second + i));
@@ -314,7 +314,7 @@ vector<pair<int,int>> Koningin::geldige_zetten(Game& game) const{
             break;
         }
     }
-    //loop naar boven - links
+    // Loop naar boven - links
     for(int i = 1; pos.first + i < 8 && pos.second - i >= 0; i++){
         if(game.bezet(pos.first + i, pos.second - i) == nullptr){
             wow.push_back(make_pair(pos.first + i,pos.second - i));

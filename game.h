@@ -1,6 +1,7 @@
-//  Student:
-//  Rolnummer:
-//  Opmerkingen: (bvb aanpassingen van de opgave)
+//  Student: Daria Matviichuk
+//  Rolnummer: s0221485
+//  Opmerkingen: In SchaakGUI.cpp kunt u kiezen voor welke kleur AI speelt
+//  (daarvoor moet u de inhoud van ai_kleur aanpassen, zie lijn 10)
 //
 
 #ifndef SCHAKEN_GAME_H
@@ -41,7 +42,7 @@ private:
     vector<SchaakStuk*> speelbord;
     pair<int,int> wk_pos;
     pair<int,int> zk_pos;
-    // Hier staan evaluatie tabellen voor de schaken:
+    // Hier staan evaluatietabellen voor de schaken:
     double pawnW [8][8] ={{0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0},
                     {1.0,  1.0,  2.0,  3.0,  3.0,  2.0,  1.0,  1.0},
                     {1.0,  1.0,  2.0,  3.0,  3.0,  2.0,  1.0,  1.0},
