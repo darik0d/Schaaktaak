@@ -220,7 +220,11 @@ void SchaakGUI::aiStap(zw kleur){
     removeAllMarking();
     wit_aan_de_beurt = !wit_aan_de_beurt;
     pair<SchaakStuk*, pair<int,int>> beste_move = besteZet(kleur);
-    if(beste_move.first == nullptr) return; // Als er geen zet mogelijk is, stop
+    if(beste_move.first == nullptr) { // Als er geen zet mogelijk is, stop
+        wit_aan_de_beurt = !wit_aan_de_beurt;
+        stepForward();
+        return;
+    }
     g.move(beste_move.first, beste_move.second.first, beste_move.second.second);
 
     //check special cases:

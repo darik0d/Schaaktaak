@@ -267,8 +267,8 @@ double Game::evaluatePosition(zw kleur){
             }
             else if(typeid(*figuur) == typeid(Loper)) {
                 to_return += coef*30;
-//                if(figuur->getKleur() == wit) to_return += coef*loperW[pos.first][pos.second];
-//                else to_return += coef*loperZ[pos.first][pos.second];
+                if(figuur->getKleur() == wit) to_return += coef*loperW[pos.first][pos.second];
+                else to_return += coef*loperZ[pos.first][pos.second];
             }
             else if(typeid(*figuur) == typeid(Toren)) {
                 to_return += coef*50;
